@@ -1,0 +1,20 @@
+[
+  { "eng": "English" },
+  { "spa": "Spanish" },
+  { "fra": "French" },
+  { "por": "Portuguese" },
+  { "ara": "Arabic" },
+  { "kor": "Korean" },
+  { "jpn": "Japanese" },
+  { "rus": "Russian" },
+  { "deu": "German" },
+  { "ita": "Italian" },
+  { "hin": "Hindi" },
+  { "swa": "Swahili" },
+  { "tha": "Thai" },
+  { "ind": "Indonesian" },
+  { "tgl": "Tagalog" },
+  { "vie": "Vietnamese" },
+  { "amh": "Amharic" },
+  { "hat": "Haitian Creole" }
+]
