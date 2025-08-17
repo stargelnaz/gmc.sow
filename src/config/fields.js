@@ -1,5 +1,4 @@
 // src/config/fields.js
-
 import { languageOptions, LANGUAGE_LABEL_BY_CODE } from './languageOptions';
 
 export const FIELDS = [
@@ -31,7 +30,7 @@ export const FIELDS = [
     label: 'Languages (Ctrl/Cmd to select multiple)',
     page: 1,
     type: 'string[]', // store array of codes: ["eng", "spa", ...]
-    options: languageOptions, // [{value, label}, ...]
+    options: languageOptions, // [{ value, label }, ...]
     defaultValue: () =>
       languageOptions.length ? [languageOptions[0].value] : [],
     hint: (values) =>
@@ -121,7 +120,7 @@ export const FIELDS = [
     defaultValue: () => {
       const d = new Date();
       d.setDate(d.getDate() + 7);
-      return d.toISOString().split('T')[0]; // yyyy-mm-dd format
+      return d.toISOString().split('T')[0]; // yyyy-mm-dd
     }
   },
   {
@@ -172,7 +171,7 @@ export const FIELDS = [
     defaultValue: 'John Doe'
   },
   {
-    id: 'contractorContact', // typo fixed (was "cotractorContact")
+    id: 'contractorContact',
     label: 'Contractor Contact',
     page: 2,
     type: 'string',

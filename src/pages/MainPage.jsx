@@ -1,7 +1,8 @@
 // src/pages/MainPage.jsx
 import { useNavigate } from 'react-router-dom';
 import { useFormStore } from '../store/useFormStore';
-import { fieldsForPage } from '../config/fields';
+import { fieldsForPage, FIELD_BY_ID } from '../config/fields';
+
 import FieldRow from '../components/FieldRow';
 
 export default function MainPage() {
