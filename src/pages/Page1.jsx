@@ -12,26 +12,26 @@ export default function Page1() {
   const fields = fieldsForPage(1);
 
   return (
-    <div className='page'>
-      <h2>Page 1: Enter Required Information</h2>
+    <div className='app-header'>
+      <h1>Required Information</h1>
 
-      <form className='form-grid'>
-        {/* Header row */}
-        <div className='hdr label'>Field</div>
-        <div className='hdr input'>Input</div>
-        <div className='hdr echo'>Current value</div>
+      {/* <form className='form-grid'> */}
+      {/* Header row */}
+      <div className='hdr label'>Field</div>
+      <div className='hdr input'>Input</div>
+      {/* <div className='hdr echo'>Current value</div> */}
 
-        {fields.map((field) => (
-          <FieldRow
-            key={field.id}
-            field={field}
-            value={values[field.id]}
-            error={errors[field.id]}
-            hint={hints[field.id]}
-            onChange={(val) => setValue(field.id, val)}
-          />
-        ))}
-      </form>
+      {fields.map((field) => (
+        <FieldRow
+          key={field.id}
+          field={field}
+          value={values[field.id]}
+          error={errors[field.id]}
+          hint={hints[field.id]}
+          onChange={(val) => setValue(field.id, val)}
+        />
+      ))}
+      {/* </form> */}
     </div>
   );
 }
@@ -101,7 +101,7 @@ function FieldRow({ field, value, error, hint, onChange }) {
       </div>
 
       {/* CURRENT VALUE */}
-      <div className='echo'>{formatDisplay(field, value)}</div>
+      {/* <div className='echo'>{formatDisplay(field, value)}</div> */}
     </>
   );
 }
