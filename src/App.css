@@ -64,11 +64,11 @@ main.page {
   max-width: 520px;
 }
 .echo {
-  padding: 0.4rem 0.6rem;
+  
   background: var(--echo-bg, #1f1f1f);
-  border: 1px solid var(--echo-border, #333);
-  border-radius: 6px;
-  min-height: 2.25rem;
+  /* border: 1px solid var(--echo-border, #333); */
+  /* border-radius: 6px; */
+  /* min-height: 2.25rem; */
   display: flex;
   align-items: center;
   color: var(--echo-text, #9fe);
@@ -102,7 +102,7 @@ main.page {
   justify-content: space-between;
   margin: 0.25rem 0;
   padding: 0.25rem 0.5rem;
-  background: #222;
+  background: #843f3f;
   border-radius: 4px;
 }
 .field-echo .label {
@@ -128,8 +128,8 @@ label {
 input,
 select {
   width: 100%;
-  padding: 0.6rem 0.7rem;
-  border-radius: 8px;
+  padding: 0.5rem 0.5 rem;
+  border-radius: 0px;
   border: 1px solid var(--border);
   background: #10131a;
   color: var(--ink);
@@ -302,17 +302,17 @@ select {
   grid-area: info;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 1rem;
 }
 
-.page.left {
+.panel.left {
   grid-area: left;
-  padding: 1.25rem;
+  padding: 1rem;
   background: maroon;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  color: white;
+  border-radius: 6px;
+  color: silver;
 }
 
 .page.right {
@@ -320,7 +320,7 @@ select {
   padding: 1.25rem;
   background: gray;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 6px;
   color: black;
 }
 
