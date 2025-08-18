@@ -29,16 +29,16 @@ export default function MainPage() {
     return v != null && String(v).trim() !== '';
   });
 
-  // Recompute derived page-2 fields when deps change
+  // Recompute any derived page-2 fields when deps change
   useEffect(() => {
     const derived = page2Fields.filter(
       (f) => f.derived && typeof f.compute === 'function'
     );
     const patch = {};
-    derived.forEach((f) => {
+    for (const f of derived) {
       const next = f.compute(values);
       if ((values[f.id] ?? '') !== (next ?? '')) patch[f.id] = next ?? '';
-    });
+    }
     if (Object.keys(patch).length) setMany(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.gnpSourceId, values.sourceTitle, values.totalCost]);
@@ -63,13 +63,15 @@ export default function MainPage() {
 
   return (
     <div className='page-layout'>
+      {/* Top info box */}
       <div className='page info'>
         <h2>GNP Statement of Work Generator</h2>
       </div>
 
-      {/* LEFT PANEL */}
+      {/* LEFT PANEL (note: class matches your CSS .panel.left) */}
       <div className='panel left'>
         <h2>Required Information</h2>
+
         {page1Fields.map((field) => (
           <FieldRow
             key={field.id}
@@ -79,8 +81,8 @@ export default function MainPage() {
             hint={hints[field.id]}
             onChange={(val) => setValue(field.id, val)}
           />
-        ))}{' '}
-        {/* Buttons */}
+        ))}
+
         <div className='buttons'>
           <button
             className='btn primary'
@@ -95,7 +97,7 @@ export default function MainPage() {
         </div>
       </div>
 
-      {/* RIGHT: Stacked layout using Page-2 fields (defaults + derived) */}
+      {/* RIGHT PANEL: only shows after page-1 is valid */}
       <div className='page right'>
         {isPage1Complete ? (
           <>
@@ -115,33 +117,18 @@ export default function MainPage() {
           </>
         ) : null}
       </div>
-
-      {/* Buttons at bottom of right panel*/}
-      {/* <div className='buttons'>
-        <button className='btn primary' type='button' onClick={handleContinue}>
-          Continue
-        </button>
-        <button className='btn danger' type='button' onClick={resetAll}>
-          Clear
-        </button>
-      </div> */}
     </div>
   );
 }
 
-/**
- * Minimal stacked row for the right panel (no echo column).
- * Respects `field.derived` by rendering readOnly inputs.
- */
+// Minimal stacked row for the right panel (no echo column).
 function RightFieldRow({ field, value, error, hint, onChange }) {
   const inputId = `fld-${field.id}`;
   const readOnly = !!field.derived;
 
-  const handleChange = (e) => {
+  const onChangeBasic = (e) => {
     const raw = e.target.value;
-    let v = raw;
-    if (field.type === 'number') v = Number(raw);
-    onChange(v);
+    onChange(field.type === 'number' ? Number(raw) : raw);
   };
 
   return (
@@ -151,42 +138,23 @@ function RightFieldRow({ field, value, error, hint, onChange }) {
         {field.derived ? ' (auto)' : ''}
       </label>
 
-      {field.type === 'string[]' && field.options ? (
-        <select
-          id={inputId}
-          multiple
-          value={value ?? []}
-          onChange={(e) =>
-            onChange(Array.from(e.target.selectedOptions, (opt) => opt.value))
-          }
-          aria-describedby={hint ? `${inputId}-hint` : undefined}
-          disabled={readOnly}
-        >
-          {field.options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          id={inputId}
-          type={
-            field.type === 'number'
-              ? 'number'
-              : field.type === 'date'
-              ? 'date'
-              : 'text'
-          }
-          value={
-            value ??
-            (field.type === 'number' ? 0 : field.type === 'string[]' ? [] : '')
-          }
-          onChange={handleChange}
-          aria-describedby={hint ? `${inputId}-hint` : undefined}
-          readOnly={readOnly}
-        />
-      )}
+      <input
+        id={inputId}
+        type={
+          field.type === 'number'
+            ? 'number'
+            : field.type === 'date'
+            ? 'date'
+            : 'text'
+        }
+        value={
+          value ??
+          (field.type === 'number' ? 0 : field.type === 'string[]' ? [] : '')
+        }
+        onChange={onChangeBasic}
+        aria-describedby={hint ? `${inputId}-hint` : undefined}
+        readOnly={readOnly}
+      />
 
       {hint && (
         <div id={`${inputId}-hint`} className='hint'>

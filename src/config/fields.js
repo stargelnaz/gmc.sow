@@ -8,7 +8,7 @@ export const FIELDS = [
     label: 'GNP Source ID',
     page: 1,
     type: 'string',
-    defaultValue: '', // empty until user types
+    defaultValue: '',
     hint: (values) =>
       values.gnpSourceId ? `ID “${values.gnpSourceId}”` : 'e.g. GNPS00023',
     validate: (v) => (!v || v.trim() === '' ? 'Required.' : null)
@@ -18,7 +18,7 @@ export const FIELDS = [
     label: 'Source Title',
     page: 1,
     type: 'string',
-    defaultValue: '', // empty until user types
+    defaultValue: '',
     hint: (values) =>
       values.sourceTitle
         ? `Project “${values.sourceTitle}”`
@@ -29,8 +29,8 @@ export const FIELDS = [
     id: 'languages',
     label: 'Languages (Ctrl/Cmd to select multiple)',
     page: 1,
-    type: 'string[]',
-    options: languageOptions,
+    type: 'string[]', // store array of codes: ["eng", "spa", ...]
+    options: languageOptions, // [{ value, label }, ...]
     defaultValue: [], // MUST be an array
     hint: (values) =>
       values.languages?.length
@@ -46,7 +46,7 @@ export const FIELDS = [
     label: 'Total Cost (USD)',
     page: 1,
     type: 'number',
-    defaultValue: 0, // numeric; 0 will fail validation
+    defaultValue: 0,
     hint: (values) =>
       Number.isFinite(values.totalCost) && values.totalCost > 0
         ? 'OK'
@@ -66,13 +66,28 @@ export const FIELDS = [
     type: 'string',
     defaultValue: '',
     derived: true,
-    compute: (values) =>
-      values.sourceTitle && values.gnpSourceId
-        ? `${values.sourceTitle} (${values.gnpSourceId})`
-        : values.sourceTitle || values.gnpSourceId || '',
-    dependsOn: ['sourceTitle', 'gnpSourceId'],
-    hint: () => `Auto-generated from Source Title and GNP Source ID`
+    compute: (values) => {
+      // base: "Title (ID)"
+      const base =
+        values.sourceTitle && values.gnpSourceId
+          ? `${values.sourceTitle} (${values.gnpSourceId})`
+          : values.sourceTitle || values.gnpSourceId || '';
+
+      // languages suffix: map codes -> labels; limit or "Multiple Languages"
+      const langs = Array.isArray(values.languages) ? values.languages : [];
+      const labels = langs.map((c) => LANGUAGE_LABEL_BY_CODE[c] || c);
+      let langSuffix = '';
+      if (labels.length === 1) langSuffix = ` — ${labels[0]}`;
+      else if (labels.length > 1 && labels.length <= 4)
+        langSuffix = ` — ${labels.join(', ')}`;
+      else if (labels.length > 4) langSuffix = ' — Multiple Languages';
+
+      return base + langSuffix;
+    },
+    dependsOn: ['sourceTitle', 'gnpSourceId', 'languages'],
+    hint: () => `Auto-generated from Source Title, GNP Source ID, and Languages`
   },
+
   // 1. Project Information
   {
     id: 'projectSummary',
@@ -102,6 +117,7 @@ export const FIELDS = [
     },
     transformIn: (v) => (v ? v.toUpperCase() : v)
   },
+
   // 2. Scope of work
   {
     id: 'descriptionOfServices',
@@ -117,6 +133,7 @@ export const FIELDS = [
     type: 'string',
     defaultValue: 'Indesign package, PDF, and source files'
   },
+
   // 3. Schedule
   {
     id: 'startDate',
@@ -152,6 +169,7 @@ export const FIELDS = [
     type: 'string',
     defaultValue: 'Initial translation, review, final delivery'
   },
+
   // 4. Compensation
   {
     id: 'paymentTerms',
@@ -160,6 +178,7 @@ export const FIELDS = [
     type: 'string',
     defaultValue: '55% upfront, 45% on delivery'
   },
+
   // 5. Work Requirements
   {
     id: 'workRequirements',
@@ -168,6 +187,7 @@ export const FIELDS = [
     type: 'string',
     defaultValue: 'High quality, professional standards'
   },
+
   // 6. Primary Contacts
   {
     id: 'companyContact',
