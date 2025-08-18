@@ -8,7 +8,7 @@ export const FIELDS = [
     label: 'GNP Source ID',
     page: 1,
     type: 'string',
-    defaultValue: 'An Example ID for testing',
+    defaultValue: '', // empty until user types
     hint: (values) =>
       values.gnpSourceId ? `ID “${values.gnpSourceId}”` : 'e.g. GNPS00023',
     validate: (v) => (!v || v.trim() === '' ? 'Required.' : null)
@@ -18,7 +18,7 @@ export const FIELDS = [
     label: 'Source Title',
     page: 1,
     type: 'string',
-    defaultValue: 'An Example Title for testing',
+    defaultValue: '', // empty until user types
     hint: (values) =>
       values.sourceTitle
         ? `Project “${values.sourceTitle}”`
@@ -29,10 +29,9 @@ export const FIELDS = [
     id: 'languages',
     label: 'Languages (Ctrl/Cmd to select multiple)',
     page: 1,
-    type: 'string[]', // store array of codes: ["eng", "spa", ...]
-    options: languageOptions, // [{ value, label }, ...]
-    defaultValue: () =>
-      languageOptions.length ? [languageOptions[0].value] : [],
+    type: 'string[]',
+    options: languageOptions,
+    defaultValue: [], // MUST be an array
     hint: (values) =>
       values.languages?.length
         ? `Languages: ${values.languages
@@ -47,9 +46,16 @@ export const FIELDS = [
     label: 'Total Cost (USD)',
     page: 1,
     type: 'number',
-    defaultValue: 0.01,
-    hint: (values) => (values.totalCost > 0 ? 'OK' : 'Set a non-zero price.'),
-    validate: (v) => (v > 0 ? null : 'Price must be greater than 0.')
+    defaultValue: 0, // numeric; 0 will fail validation
+    hint: (values) =>
+      Number.isFinite(values.totalCost) && values.totalCost > 0
+        ? 'OK'
+        : 'Set a non-zero price.',
+    validate: (v) => {
+      if (!Number.isFinite(v)) return 'Enter a valid number.';
+      if (v <= 0) return 'Price must be greater than 0.';
+      return null;
+    }
   },
 
   // === Page 2: editable with hints + derived ===

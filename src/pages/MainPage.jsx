@@ -1,21 +1,40 @@
 // src/pages/MainPage.jsx
 import { useNavigate } from 'react-router-dom';
 import { useFormStore } from '../store/useFormStore';
-import { fieldsForPage, FIELD_BY_ID } from '../config/fields';
-
+import { fieldsForPage } from '../config/fields';
 import FieldRow from '../components/FieldRow';
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const resetAll = useFormStore((s) => s.resetAll);
 
-  // pull form state
-  const setValue = useFormStore((s) => s.setValue);
+  // store
   const values = useFormStore((s) => s.values);
   const errors = useFormStore((s) => s.errors);
   const hints = useFormStore((s) => s.hints);
+  const setValue = useFormStore((s) => s.setValue);
+  const setErrors = useFormStore((s) => s.setErrors);
+  const resetAll = useFormStore((s) => s.resetAll);
 
   const page1Fields = fieldsForPage(1);
+
+  const handleContinue = () => {
+    const errs = {};
+    for (const f of page1Fields) {
+      if (typeof f.validate === 'function') {
+        const msg = f.validate(values[f.id]);
+        if (msg) errs[f.id] = msg;
+      }
+    }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      // optional: scroll to first error field
+      const firstId = Object.keys(errs)[0];
+      const el = document.getElementById(`fld-${firstId}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    navigate('/export');
+  };
 
   return (
     <div className='page-layout'>
@@ -24,7 +43,7 @@ export default function MainPage() {
         <h2>GNP Statement of Work Generator</h2>
       </div>
 
-      {/* LEFT: Page 1 form */}
+      {/* LEFT: Page 1 form (stacked, no 3-col grid) */}
       <div className='panel left'>
         <h2>Required Information</h2>
 
@@ -38,20 +57,19 @@ export default function MainPage() {
             onChange={(val) => setValue(field.id, val)}
           />
         ))}
-        {/* </form> */}
       </div>
 
-      {/* RIGHT: placeholder for now */}
+      {/* RIGHT: placeholder */}
       <div className='page right'>
         <h2>Statement of Work</h2>
       </div>
 
       {/* Buttons */}
       <div className='buttons'>
-        <button className='btn primary' onClick={() => navigate('/export')}>
+        <button className='btn primary' type='button' onClick={handleContinue}>
           Continue
         </button>
-        <button className='btn danger' onClick={resetAll}>
+        <button className='btn danger' type='button' onClick={resetAll}>
           Clear
         </button>
       </div>

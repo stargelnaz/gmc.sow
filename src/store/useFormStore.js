@@ -36,8 +36,7 @@ function buildInitialValues() {
 }
 
 // Optional helper if you want to auto-compute completionDate when startDate changes.
-// Currently assumes startDate as "DD Mon YYYY" (e.g., "07 Sep 2025"). If you use ISO,
-// swap this to your preferred logic or remove entirely.
+// Currently assumes startDate as "DD Mon YYYY" (e.g., "07 Sep 2025").
 function computeCompletionFromStartDDMMMYYYY(startDateStr) {
   if (!startDateStr) return '';
   const parts = startDateStr.split(' ');
@@ -72,22 +71,27 @@ export const useFormStore = create((set, get) => ({
   errors: {},
   hints: {},
 
-  // Set a single field
+  // Set a single field; clears only that field’s error
   setValue: (id, val) =>
     set((state) => ({
       values: { ...state.values, [id]: val },
       errors: { ...state.errors, [id]: null }
     })),
 
-  // Set many fields at once (useful when importing or bulk updates)
+  // Bulk set many fields; clears errors for those fields
   setMany: (patch) =>
     set((state) => ({
       values: { ...state.values, ...patch },
-      // clear any errors for fields being patched
       errors: {
         ...state.errors,
         ...Object.fromEntries(Object.keys(patch).map((k) => [k, null]))
       }
+    })),
+
+  // New: apply multiple validation errors at once
+  setErrors: (errs) =>
+    set((state) => ({
+      errors: { ...state.errors, ...errs }
     })),
 
   // Optional: set start date and auto-calc completion date (DD Mon YYYY format)
