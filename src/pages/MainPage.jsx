@@ -17,6 +17,17 @@ export default function MainPage() {
 
   const page1Fields = fieldsForPage(1);
 
+  // "Complete" = all page-1 validators pass (or sensible fallback checks)
+  const isPage1Complete = page1Fields.every((f) => {
+    const v = values[f.id];
+    if (typeof f.validate === 'function') {
+      return f.validate(v) === null;
+    }
+    if (f.type === 'string[]') return Array.isArray(v) && v.length > 0;
+    if (f.type === 'number') return Number.isFinite(v) && v > 0;
+    return v != null && String(v).trim() !== '';
+  });
+
   const handleContinue = () => {
     const errs = {};
     for (const f of page1Fields) {
@@ -27,7 +38,6 @@ export default function MainPage() {
     }
     if (Object.keys(errs).length) {
       setErrors(errs);
-      // optional: scroll to first error field
       const firstId = Object.keys(errs)[0];
       const el = document.getElementById(`fld-${firstId}`);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -43,7 +53,7 @@ export default function MainPage() {
         <h2>GNP Statement of Work Generator</h2>
       </div>
 
-      {/* LEFT: Page 1 form (stacked, no 3-col grid) */}
+      {/* LEFT: Page 1 form (stacked) */}
       <div className='panel left'>
         <h2>Required Information</h2>
 
@@ -59,9 +69,14 @@ export default function MainPage() {
         ))}
       </div>
 
-      {/* RIGHT: placeholder */}
+      {/* RIGHT: stays gray and empty until complete */}
       <div className='page right'>
-        <h2>Statement of Work</h2>
+        {isPage1Complete ? (
+          <>
+            <h2>Statement of Work</h2>
+            {/* TODO: SOW preview content goes here */}
+          </>
+        ) : null}
       </div>
 
       {/* Buttons */}
