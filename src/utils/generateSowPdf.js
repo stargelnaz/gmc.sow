@@ -3,9 +3,8 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { languagesLine, formatUSD } from './sowHelpers';
 
-// `state` should be the current values from your store
 export function generateSowPdf(state) {
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' }); // 595 x 842 pt
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const M = { l: 54, r: 54, t: 64, b: 64 };
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -69,23 +68,21 @@ export function generateSowPdf(state) {
 
   // Preamble
   addText(
-    'This Statement of Work (“SOW”) is made pursuant to the Master Services Agreement (“Agreement”) dated 00 MON 2025, between Inc. (“Company”) and Inc. (“Contractor”).'
+    state.preamble ||
+      'This Statement of Work (“SOW”) is made pursuant to the Master Services Agreement (“Agreement”) dated 00 MON 2025, between Inc. (“Company”) and Inc. (“Contractor”).'
   );
 
   // 1. Project Information
   y += 6;
   addText('1. PROJECT INFORMATION', { bold: true });
-  addKV(
-    '1.1 Project Name:',
-    `${state.sourceTitle || ''} — ${languagesLine(state.languages || []) || ''}`
-  );
-  addKV('1.2 Project Summary:', state.projectSummary || 'Fallback Text.');
+  addKV('1.1 Project Name:', state.projectName || '');
+  addKV('1.2 Project Summary:', state.projectSummary || '');
 
   // 2. Scope
   y += 6;
   addText('2. SCOPE OF WORK', { bold: true });
-  addKV('2.1 Description of Services:', state.services || 'Fallback Text.');
-  addKV('2.2 Deliverables:', state.deliverables || 'Fallback Text.');
+  addKV('2.1 Description of Services:', state.services || '');
+  addKV('2.2 Deliverables:', state.deliverables || '');
 
   // 3. Schedule
   y += 6;
@@ -97,27 +94,26 @@ export function generateSowPdf(state) {
   // 4. Compensation
   y += 6;
   addText('4. COMPENSATION', { bold: true });
-  addKV('4.1 Total Fee:', formatUSD(state.priceCents ?? 0));
-  addKV('4.2 Payment Terms:', state.paymentTerms || 'Fallback Text.');
+  // NOTE: "Total Cost (USD)" from right panel is mapped to "4.1 Total Fee"
+  addKV('4.1 Total Fee:', formatUSD(state.totalCostUSD ?? 0));
+  addKV('4.2 Payment Terms:', state.paymentTerms || '');
 
   // 5. Requirements
   y += 6;
   addText('5. WORK REQUIREMENTS', { bold: true });
-  addKV('5.1 Tools/Materials:', state.materials || 'Fallback Text.');
+  addKV('5.1 Tools/Materials:', state.materials || '');
 
   // 6. Contacts
   y += 6;
   addText('6. PRIMARY CONTACT FOR THIS PROJECT', { bold: true });
-  addKV('6.1 Company Representative:', state.companyRep || 'Fallback Text.');
-  addKV(
-    '6.2 Contractor Representative:',
-    state.contractorRep || 'Fallback Text.'
-  );
+  addKV('6.1 Company Representative:', state.companyRep || '');
+  addKV('6.2 Contractor Representative:', state.contractorRep || '');
 
   // Witness + table
   y += 10;
   addText(
-    'IN WITNESS WHEREOF, the parties have executed this Statement of Work as of the dates set forth.'
+    state.witnessText ||
+      'IN WITNESS WHEREOF, the parties have executed this Statement of Work as of the dates set forth.'
   );
   autoTable(doc, {
     startY: y + 6,
@@ -156,6 +152,6 @@ export function generateSowPdf(state) {
 
   // Filename
   const dateStamp = new Date().toISOString().slice(0, 10);
-  const safeTitle = (state.sourceTitle || 'Untitled').replace(/[^\w.-]+/g, '_');
+  const safeTitle = (state.projectName || 'Untitled').replace(/[^\w.-]+/g, '_');
   doc.save(`GNP-SOW_${safeTitle}_${dateStamp}.pdf`);
 }
