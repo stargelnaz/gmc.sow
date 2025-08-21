@@ -201,11 +201,17 @@ export function generateSowPdf(state) {
     doc.setPage(i);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
+
+    // First footer line (left + right)
     const left = 'Related to Statement of Work to Master Services Agreement';
     const right = `Page ${i} of ${pageCount}`;
     doc.text(left, M.l, pageH - 24);
     const rw = doc.getTextWidth(right);
     doc.text(right, pageW - M.r - rw, pageH - 24);
+
+    // Second footer line (left only, below the first line)
+    const revisionNote = 'Revised 20 May 2025 (JM)';
+    doc.text(revisionNote, M.l, pageH - 12);
   }
 
   // Filename

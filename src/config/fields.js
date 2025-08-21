@@ -198,28 +198,28 @@ export const FIELDS = [
     label: 'Company Contact',
     page: 2,
     type: 'string',
-    defaultValue: 'John Doe'
+    defaultValue: 'Ejay Berce <eberce@nazarene.org>'
   },
   {
     id: 'contractorContact',
     label: 'Contractor Contact',
     page: 2,
     type: 'string',
-    defaultValue: 'Jane Smith'
+    defaultValue: 'Yuriy Prysiazhniuk <yuriy@christianlingua.com>'
   },
   {
     id: 'companySigner',
     label: 'Company Signer',
     page: 2,
     type: 'string',
-    defaultValue: 'Alice Johnson'
+    defaultValue: 'Gary M. Hartke, General Secretary'
   },
   {
     id: 'contractorSigner',
     label: 'Contractor Signer',
     page: 2,
     type: 'string',
-    defaultValue: 'Bob Brown'
+    defaultValue: 'Michael Yurchuk <michael@christianlingua.com> '
   },
 
   // Derived display field

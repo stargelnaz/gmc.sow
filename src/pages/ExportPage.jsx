@@ -21,7 +21,7 @@ export default function ExportPage() {
     <main className='page'>
       <h2>Export</h2>
       <p>
-        Click <strong>Export PDF</strong> to generate the Statement of Work
+        Click <strong>Export PDF</strong> to download the Statement of Work
         using your completed form values.
       </p>
 
@@ -33,6 +33,20 @@ export default function ExportPage() {
           Clear &amp; Start Over
         </button>
       </div>
+      <p>
+        NOTES:
+        <ul>
+          <li>The PDF will include all fields you have filled out.</li>
+          <li>
+            This app does not store your responses. If you make a mistake,
+            generate a new form.
+          </li>
+          <li>
+            GNPp: Update all PROJECTS with a memo "Statement of Work generated
+            and sent for signatures. Attach the PDF to each project."
+          </li>
+        </ul>
+      </p>
     </main>
   );
 }
