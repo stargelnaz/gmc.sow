@@ -189,7 +189,7 @@ export const FIELDS = [
     page: 2,
     type: 'string',
     defaultValue:
-      'High quality, professional standards, no access to GMC tools or systems unless provided by GNP.'
+      "Global Nazarene Publications will supply electronic files for translation. Contractor will have no access to the Company's data systems unless arranged by it's Information Technology Department."
   },
 
   // 6. Primary Contacts

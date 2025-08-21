@@ -61,15 +61,32 @@ export function generateSowPdf(state) {
       y += gap;
     });
   };
+  // ===== Title with full-width underline =====
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
 
-  // Title
-  addText('Statement of Work (SOW)', { size: 18, bold: true, gap: 22 });
-  y += 14;
+  const header = 'STATEMENT OF WORK (SOW)';
+
+  // If close to bottom, go to a new page
+  if (needPage(24)) {
+    doc.addPage();
+    y = M.t;
+  }
+
+  // Draw the header
+  doc.text(header, M.l, y);
+
+  // Draw horizontal rule spanning full content width
+  const hrY = y + 14;
+  doc.setLineWidth(0.75);
+  doc.line(M.l, hrY, pageW - M.r, hrY);
+
+  y = hrY + 24;
 
   // Preamble
   addText(
     state.preamble ||
-      'This Statement of Work (“SOW”) is made pursuant to the Master Services Agreement (“Agreement”) dated 00 MON 2025, between Inc. (“Company”) and Inc. (“Contractor”).'
+      'This Statement of Work (“SOW”) is made pursuant to the Master Services Agreement (“Agreement”) dated 00 MON 2025, between Inc. (“Company”) and Inc. (“Independent Contractor”).'
   );
 
   // 1. Project Information
@@ -98,19 +115,37 @@ export function generateSowPdf(state) {
   y += 6;
   addText('4. COMPENSATION', { bold: true });
   // NOTE: "Total Cost (USD)" from right panel is mapped to "4.1 Total Fee"
-  addKV('4.1 Total Fee:', formatUSD(state.totalCostUSD ?? 0));
+  // addKV('4.1 Total Fee:', formatUSD(state.totalCostUSD ?? 0));
+  // totalCost is a USD number from the right panel; formatUSD expects cents.
+  const totalCostCents = Number.isFinite(state.totalCost)
+    ? Math.round(state.totalCost * 100)
+    : 0;
+  addKV('4.1 Total Fee:', formatUSD(totalCostCents));
+
   addKV('4.2 Payment Terms:', state.paymentTerms || '');
 
   // 5. Requirements
   y += 6;
   addText('5. WORK REQUIREMENTS', { bold: true });
-  addKV('5.1 Tools/Materials:', state.materials || '');
+  // addKV('5.1 Tools/Materials:', state.materials || '');
+  addKV(
+    '5.1 Tools/Materials:',
+    state.workRequirements ?? state.materials ?? ''
+  );
 
   // 6. Contacts
   y += 6;
   addText('6. PRIMARY CONTACT FOR THIS PROJECT', { bold: true });
-  addKV('6.1 Company Representative:', state.companyRep || '');
-  addKV('6.2 Contractor Representative:', state.contractorRep || '');
+  // addKV('6.1 Company Representative:', state.companyRep || '');
+  // addKV('6.2 Contractor Representative:', state.contractorRep || '');
+  addKV(
+    '6.1 Company Representative:',
+    state.companyContact ?? state.companyRep ?? ''
+  );
+  addKV(
+    '6.2 Contractor Representative:',
+    state.contractorContact ?? state.contractorRep ?? ''
+  );
 
   // Witness + table
   y += 10;
@@ -118,6 +153,22 @@ export function generateSowPdf(state) {
     state.witnessText ||
       'IN WITNESS WHEREOF, the parties have executed this Statement of Work as of the dates set forth.'
   );
+
+  // Prepare signer text blocks BEFORE autoTable
+  const companySigName = state.companySigner ?? state.companySignature ?? '';
+  const contractorSigName =
+    state.contractorSigner ?? state.contractorSignature ?? '';
+
+  // If you later add title fields, append them like:
+  // const companyTitle = state.companySignerTitle ?? '';
+  // const contractorTitle = state.contractorSignerTitle ?? '';
+
+  const companyBlock =
+    `[_______________________] Date: [_____]\n` + `${companySigName}`; // + (companyTitle ? `\n${companyTitle}` : '');
+
+  const contractorBlock =
+    `[_______________________] Date: [_____]\n` + `${contractorSigName}`; // + (contractorTitle ? `\n${contractorTitle}` : '');
+
   autoTable(doc, {
     startY: y + 6,
     theme: 'plain',
@@ -132,13 +183,17 @@ export function generateSowPdf(state) {
       1: { cellWidth: contentWidth / 2 - 6 }
     },
     head: [['COMPANY', 'INDEPENDENT CONTRACTOR']],
-    body: [
-      [
-        `[_______________________] Date: [_____]\nName\nTitle`,
-        `[_______________________] Date: [_____]\nName\nTitle`
-      ]
-    ]
+    body: [[companyBlock, contractorBlock]]
   });
+
+  // keep y in sync if you draw more after the table
+  const finalY =
+    (doc.lastAutoTable && doc.lastAutoTable.finalY) || // v3+
+    (doc.autoTable &&
+      doc.autoTable.previous &&
+      doc.autoTable.previous.finalY) || // older
+    y;
+  y = finalY;
 
   // Footer per page
   const pageCount = doc.internal.getNumberOfPages();
