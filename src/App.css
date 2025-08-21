@@ -65,9 +65,8 @@ main.page {
 }
 
 .hint {
-  font-size: 0.9rem;
-  margin: 0.25rem 0 1rem 0;
-  color: var(--hint, var(--muted));
+  font-size: 0.8rem;
+  color: var(--hint);
 }
 .error {
   margin-top: 0.25rem;
@@ -283,18 +282,18 @@ select {
 .panel.left {
   grid-area: left;
   padding: 1rem;
-  background: orangered;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  color: rgb(48, 35, 35);
+  background: darkslateblue;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  color: white;
 }
 .page.right {
   grid-area: right;
   padding: 1.25rem;
   background: gray;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 6px;
-  color: black;
+  color: white;
 }
 
 .buttons {

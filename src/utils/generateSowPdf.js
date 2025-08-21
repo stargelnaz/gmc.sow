@@ -81,7 +81,10 @@ export function generateSowPdf(state) {
   // 2. Scope
   y += 6;
   addText('2. SCOPE OF WORK', { bold: true });
-  addKV('2.1 Description of Services:', state.services || '');
+  addKV(
+    '2.1 Description of Services:',
+    state.descriptionOfServices ?? state.services ?? ''
+  );
   addKV('2.2 Deliverables:', state.deliverables || '');
 
   // 3. Schedule

@@ -9,8 +9,9 @@ export const FIELDS = [
     page: 1,
     type: 'string',
     defaultValue: '',
-    hint: (values) =>
-      values.gnpSourceId ? `ID “${values.gnpSourceId}”` : 'e.g. GNPS00023',
+    hint: () =>
+      'Enter the GNP Source ID from GNPprojects. (Click the "Copy ID" button in Source Details, then paste here)',
+
     validate: (v) => (!v || v.trim() === '' ? 'Required.' : null)
   },
   {
@@ -50,7 +51,7 @@ export const FIELDS = [
     hint: (values) =>
       Number.isFinite(values.totalCost) && values.totalCost > 0
         ? 'OK'
-        : 'Set a non-zero price.',
+        : 'One combined total for ALL languages. Must be greater than 0.',
     validate: (v) => {
       if (!Number.isFinite(v)) return 'Enter a valid number.';
       if (v <= 0) return 'Price must be greater than 0.';
@@ -78,14 +79,15 @@ export const FIELDS = [
       const labels = langs.map((c) => LANGUAGE_LABEL_BY_CODE[c] || c);
       let langSuffix = '';
       if (labels.length === 1) langSuffix = ` — ${labels[0]}`;
-      else if (labels.length > 1 && labels.length <= 4)
+      else if (labels.length > 1 && labels.length <= 7)
         langSuffix = ` — ${labels.join(', ')}`;
       else if (labels.length > 4) langSuffix = ' — Multiple Languages';
 
       return base + langSuffix;
     },
     dependsOn: ['sourceTitle', 'gnpSourceId', 'languages'],
-    hint: () => `Auto-generated from Source Title, GNP Source ID, and Languages`
+    hint: () =>
+      `Auto-generated. Change the information in the "Required Information" panel, and it will update here.`
   },
 
   // 1. Project Information
@@ -94,7 +96,8 @@ export const FIELDS = [
     label: 'Project Summary',
     page: 2,
     type: 'string',
-    defaultValue: 'Translation, Editing, Formatting of',
+    defaultValue:
+      'Translation of Global Nazarene Publications project into the language(s) indicated.  ',
     hint: (values) =>
       values.projectSummary
         ? 'Make sure summary matches scope and dates.'
@@ -185,7 +188,8 @@ export const FIELDS = [
     label: 'Work Requirements',
     page: 2,
     type: 'string',
-    defaultValue: 'High quality, professional standards'
+    defaultValue:
+      'High quality, professional standards, no access to GMC tools or systems unless provided by GNP.'
   },
 
   // 6. Primary Contacts

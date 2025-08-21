@@ -11,7 +11,7 @@ export default function MainPage() {
   // store
   const values = useFormStore((s) => s.values);
   const errors = useFormStore((s) => s.errors);
-  const hints = useFormStore((s) => s.hints);
+  // const hints = useFormStore((s) => s.hints);
   const setValue = useFormStore((s) => s.setValue);
   const setErrors = useFormStore((s) => s.setErrors);
   const setMany = useFormStore((s) => s.setMany);
@@ -72,16 +72,21 @@ export default function MainPage() {
       <div className='panel left'>
         <h2>Required Information</h2>
 
-        {page1Fields.map((field) => (
-          <FieldRow
-            key={field.id}
-            field={field}
-            value={values[field.id]}
-            error={errors[field.id]}
-            hint={hints[field.id]}
-            onChange={(val) => setValue(field.id, val)}
-          />
-        ))}
+        {page1Fields.map((field) => {
+          const hintText =
+            typeof field.hint === 'function' ? field.hint(values) : field.hint;
+
+          return (
+            <FieldRow
+              key={field.id}
+              field={field}
+              value={values[field.id]}
+              error={errors[field.id]}
+              hint={hintText}
+              onChange={(val) => setValue(field.id, val)}
+            />
+          );
+        })}
 
         <div className='buttons'>
           <button
@@ -103,16 +108,23 @@ export default function MainPage() {
           <>
             <h2>Statement of Work</h2>
             <div className='stack'>
-              {page2Fields.map((field) => (
-                <RightFieldRow
-                  key={field.id}
-                  field={field}
-                  value={values[field.id]}
-                  error={errors[field.id]}
-                  hint={hints[field.id]}
-                  onChange={(val) => setValue(field.id, val)}
-                />
-              ))}
+              {page2Fields.map((field) => {
+                const hintText =
+                  typeof field.hint === 'function'
+                    ? field.hint(values)
+                    : field.hint;
+
+                return (
+                  <RightFieldRow
+                    key={field.id}
+                    field={field}
+                    value={values[field.id]}
+                    error={errors[field.id]}
+                    hint={hintText}
+                    onChange={(val) => setValue(field.id, val)}
+                  />
+                );
+              })}
             </div>
           </>
         ) : null}
