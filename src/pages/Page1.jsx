@@ -14,13 +14,11 @@ export default function Page1() {
   return (
     <div className='app-header'>
       <h1>Required Information</h1>
-
-      {/* <form className='form-grid'> */}
+      Need help? {/* <form className='form-grid'> */}
       {/* Header row */}
       <div className='hdr label'>Field</div>
       <div className='hdr input'>Input</div>
       {/* <div className='hdr echo'>Current value</div> */}
-
       {fields.map((field) => (
         <FieldRow
           key={field.id}
